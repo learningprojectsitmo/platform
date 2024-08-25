@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="lp_score_master_form" model="ir.ui.view">
+            <field name="name">score.master.wizard</field>
+            <field name="type">form</field>
+            <field name="model">lp.score.master.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Оценить">
+                    <group>
+                        <field name="author"/>
+                        <field name="document_ids" widget="many2many_binary"/>
+                        <field name="score_master"/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Confirm" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="score_master_wizard" model="ir.actions.act_window">
+            <field name="name">Assignment Claim</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lp.score.master.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="lp_score_master_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

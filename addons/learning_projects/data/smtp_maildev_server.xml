@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<odoo noupdate="1">
+    <record id="outgoing_smtp_maildev_server_outlook" model="ir.mail_server">
+        <field name="name">OUTGOING MAILDEV SMTP SERVER</field>
+        <field name="sequence">2</field>
+        <field name="smtp_host">maildev</field>
+        <field name="smtp_port">1025</field>
+        <field name="smtp_debug">1</field>
+        <field name="active">1</field>
+    </record>
+</odoo>

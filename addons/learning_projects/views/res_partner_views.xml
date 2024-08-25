@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="view_form_partner" model="ir.ui.view">
+            <field name="name">Partner Form</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form//sheet" position="before">
+                    <field name="is_admin" invisible="1"/>
+                    <field name="is_master" invisible="1"/>
+                    <field name="is_bachelor" invisible="1"/>
+                    <field name="is_lecturer" invisible="1"/>
+                    <header>
+                        <button string="Поствавить оценку" type="object" name="action_score_lecturer" class="oe_highlight" groups="learning_projects.lp_group_lecturer"
+                                attrs="{'invisible': ['&amp;',('document_ids', '!=', False), ('is_lecturer','!=',False)]}"/>
+                    </header>
+                </xpath>
+                <xpath expr="//sheet/group" position="replace">
+                    <group>
+                        <group>
+
+                            <span class="o_form_label o_td_label" name="address_name">
+                                <field name="type" attrs="{'invisible': [('is_company','=', True)], 'required': [('is_company','!=', True)], 'readonly': [('user_ids', '!=', [])]}" class="fw-bold"/>
+                                <b attrs="{'invisible': [('is_company', '=', False)]}">Address</b>
+                            </span>
+                            <div class="o_address_format">
+                                <field name="street" placeholder="Street..." class="o_address_street" attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street" attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                <field name="city" placeholder="City" class="o_address_city" attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"
+                                       attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}" context="{'country_id': country_id, 'default_country_id': country_id, 'zip': zip}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip" attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                <div name="partner_address_country" class="d-flex justify-content-between">
+                                    <field name="country_id" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                </div>
+                            </div>
+                            <field name="vat" placeholder="e.g. BE0477472701" attrs="{'readonly': [('parent_id','!=',False)]}"/>
+                        </group>
+                        <group>
+                            <field name="user_ids" invisible="1"/>
+                            <field name="is_admin" invisible="1"/>
+                            <field name="is_lecturer" invisible="1"/>
+                            <field name="active_lang_count" invisible="1"/>
+                            <field name="academic_degree" groups="learning_projects.lp_group_master,learning_projects.lp_group_bachelor"/>
+                            <field name="email" widget="email" context="{'gravatar_image': True}" attrs="{'required': [('user_ids','!=', [])]}"/>
+                            <field name="telegram_url" widget="url"/>
+                            <field name="number_groups" attrs="{'invisible': ['|',('is_admin', '=', True), ('is_lecturer', '=', True)]}"/>
+                            <field name="lang" attrs="{'invisible': [('active_lang_count', '&lt;=', 1)]}"/>
+                        </group>
+                        <group string="Проект">
+                            <field name="in_project"/>
+                            <field name="lp_project_id"/>
+                            <field name="score_lecturer"/>
+                            <field name="score_master"/>
+                            <field name="document_ids" widget="many2many_binary"/>
+                        </group>
+                        <group string="Роли">
+                            <field name="is_admin"/>
+                            <field name="is_master"/>
+                            <field name="is_bachelor"/>
+                            <field name="is_lecturer"/>
+                        </group>
+                    </group>
+                </xpath>
+
+                <xpath expr="//group/group" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//div[@class='o_address_format']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//page[@name='contact_addresses']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sales_purchases']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_search_partners" model="ir.ui.view">
+            <field name="name">Partners Filters</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Search Partner">
+                        <field name="name"/>
+                        <field name="ear"/>
+                        <field name="number_groups"/>
+                        <field name="potok"/>
+                        <field name="lp_project_id"/>
+
+                        <filter name="filter_admin"
+                                string="Admin"
+                                domain="[('is_admin','=',True)]"/>
+                        <filter name="filter_lecturer"
+                                string="Преподаватель"
+                                domain="[('is_lecturer','=',True)]"/>
+                        <filter name="filter_master"
+                                string="Магистр"
+                                domain="[('is_master','=',True)]"/>
+                        <filter name="filter_bachelor"
+                                string="Бакалавр"
+                                domain="[('is_bachelor','=',True)]"/>
+                        <separator/>
+                        <filter name="in_project_filter"
+                                string="Уже в проекте"
+                                domain="[('in_project', '=', True)]"/>
+                        <filter name="not_in_project_filter"
+                                string="Не проекте"
+                                domain="[('in_project', '!=', True)]"/>
+                        <separator/>
+                        <group expand="0" string="Group By">
+                            <filter string="Проект" name="group_lp_project_id" context="{'group_by': 'lp_project_id'}"/>
+                            <filter string="Поток" name="group_potok" context="{'group_by': 'potok'}"/>
+                            <filter string="Группа" name="group_number_groups" context="{'group_by': 'number_groups'}"/>
+                            <filter string="Год" name="group_ear" context="{'group_by': 'ear'}"/>
+                        </group>
+                    </search>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="partner_form_disable_delete" model="ir.ui.view">
+            <field name="name">partner.form.disable.delete</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="delete">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="partner_tree_disable_delete" model="ir.ui.view">
+            <field name="name">partner.tree.disable.delete</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="delete">false</attribute>
+                </xpath>
+                <field name="phone" position="replace">
+                    <field name="is_admin" invisible="1"/>
+                    <field name="is_lecturer" invisible="1"/>
+                    <field name="number_groups" attrs="{'invisible': ['|',('is_admin', '=', True), ('is_lecturer', '=', True)]}"/>
+                    <field name="lp_project_id"/>
+                    <field name="score_lecturer"/>
+                    <field name="score_master"/>
+                    <field name="document_ids" widget="many2many_binary"/>
+                </field>
+                <field name="email" position="replace">
+                    <field name="email" invisible="1"/>
+                </field>
+                <field name="user_id" position="replace">
+                    <field name="user_id" invisible="1"/>
+                </field>
+                <field name="activity_ids" position="replace">
+                    <field name="activity_ids" invisible="1"/>
+                </field>
+                <field name="country_id" position="replace">
+                    <field name="country_id" invisible="1"/>
+                </field>
+                <field name="city" position="replace">
+                    <field name="city" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="action_nocontent_res_partner" model="ir.actions.act_window">
+            <field name="name">Пользователи</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    You haven't created any projects yet.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

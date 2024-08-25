@@ -1,0 +1,94 @@
+version: "3.6"
+services:
+
+  nginx:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      #- '80:80'
+      #- '81:81'
+      - '443:443'
+    environment:
+      HOSTNAMES: nginx.itmo-learning-projects.ru
+    volumes:
+      - ./data/nginxm/data:/data
+      - ./data/nginxm/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - odoo
+      - vpn
+      - dps
+
+
+  vpn:
+    image: hwdsl2/ipsec-vpn-server
+    restart: always
+    env_file:
+      - ./config/vpn_prod.env
+    ports:
+      - "500:500/udp"
+      - "4500:4500/udp"
+    privileged: true
+    dns:
+      - 172.177.0.10
+    hostname: ipsec-vpn-server
+    container_name: ipsec-vpn-server
+    volumes:
+      - /lib/modules:/lib/modules:ro
+
+  odoo:
+    restart: always
+    container_name: odoo
+    image: ghcr.io/itmolerningproject/odoo16:latest
+    command: -u learning_projects -d odoo
+    volumes:
+      - ./data/odoo:/var/lib/odoo
+      - ./config/odoo.prod.conf:/etc/odoo/odoo.conf
+      - ./addons:/mnt/extra-addons
+
+
+  postgres:
+    restart: always
+    container_name: postgres
+    image: postgres:13
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_PASSWORD: "WLgxqy4gy94HrJB6LSma"
+      POSTGRES_USER: "odoo"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql/data/pgdata
+
+
+  pgadmin:
+    restart: always
+    image: dpage/pgadmin4:6.4
+    environment:
+      HOSTNAMES: pgadmin.itmo-learning-projects.ru
+      PGADMIN_DEFAULT_EMAIL: pgadmin@email.com
+      PGADMIN_DEFAULT_PASSWORD: 9tkgWIxz3nknyoIlBQYL
+    volumes:
+      - ./config/pgadmin-servers.prod.json:/pgadmin4/servers.json
+    depends_on:
+      - vpn
+      - dps
+
+  dps:
+    image: defreitas/dns-proxy-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/resolv.conf:/etc/resolv.conf
+    environment:
+      - MG_LOG_LEVEL=ERROR
+    hostname: dns.itmo-learning-projects.ru
+    networks:
+      default:
+        ipv4_address: 172.177.0.10
+    depends_on:
+      - vpn
+
+networks:
+  default:
+    name: lp_network
+    ipam:
+      config:
+        - subnet: 172.177.0.0/16

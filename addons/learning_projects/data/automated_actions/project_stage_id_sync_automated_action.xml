@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<odoo noupdate="0">
+    <record model="base.automation" id="stage_id_sync_automated_action">
+        <field name="name">Project stage_id sync with status</field>
+        <field name="type">base.automation</field>
+        <field name="model_id" ref="learning_projects.model_lp_project"/>
+        <field name="state">code</field>
+        <field name="trigger">on_create_or_write</field>
+        <field name="trigger_field_ids" eval="[
+            (4, ref('learning_projects.field_lp_project__status')),
+        ]"/>
+        <field name="code">
+# Available variables:
+#  - env: Odoo Environment on which the action is triggered
+#  - model: Odoo Model of the record on which the action is triggered; is a void recordset
+#  - record: record on which the action is triggered; may be void
+#  - records: recordset of all records on which the action is triggered in multi-mode; may be void
+#  - time, datetime, dateutil, timezone: useful Python libraries
+#  - float_compare: Odoo function to compare floats based on specific precisions
+#  - log: log(message, level='info'): logging function to record debug information in ir.logging table
+#  - UserError: Warning Exception to use with raise
+#  - Command: x2Many commands namespace
+# To return an action, assign: action = {...}
+
+project_id = record.project.id
+status = record.status
+
+status_by_stage_id = {
+    'Unconfirmed': int(env.context['project_stage_1_id']),
+    'OnApproval': int(env.context['project_stage_2_id']),
+    'TeamFormation': int(env.context['project_stage_3_id']),
+    'Teamwork': int(env.context['project_stage_4_id']),
+    'Ready to defend': int(env.context['project_stage_5_id']),
+    'Past': int(env.context['project_stage_6_id']),
+}
+
+project_project = env['project.project'].search([('id', '=', project_id)])
+if project_project:
+    project_project.sudo().write({'stage_id': int(status_by_stage_id.get(status))})
+
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<odoo noupdate="0">
+    <data>
+        <menuitem id="lp_menu" name="Learning Projects"/>
+
+
+        <!-- Projects
+        <act_window id="action_project_project"
+                    name="Projects"
+                    res_model="project.project"
+                    view_mode="kanban,tree,form"/>
+
+        <menuitem id="menuitem_project_project"
+                  name="Projects"
+                  action="action_project_project"
+                  parent="lp_menu"
+                  sequence="1"/>-->
+
+        <!-- Lecturer and Master-->
+        <menuitem id="menuitem_lp_project_master"
+                  name="Проекты"
+                  action="action_nocontent_lp_project_management"
+                  parent="lp_menu"
+                  sequence="0" groups="learning_projects.lp_group_master"/>
+
+        <menuitem name="Доски"
+                  id="project_master"
+                  action="project.open_view_project_all"
+                  parent="lp_menu" groups="learning_projects.lp_group_master"
+                  sequence="2"/>
+        
+        <menuitem id="menuitem_lp_project_lecturer_admin"
+                  name="Проекты"
+                  action="action_nocontent_lp_project_management_lecturer"
+                  parent="lp_menu"
+                  sequence="0" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin"/>
+
+
+        <menuitem name="Доски"
+                  id="project_lecturer"
+                  action="project.open_view_project_all_group_stage"
+                  parent="lp_menu" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin"
+                  sequence="2"/>
+
+        <menuitem id="menuitem_lp_resume_lecture_master"
+                  name="Резюме"
+                  action="action_nocontent_lp_resume"
+                  parent="lp_menu"
+                  sequence="3" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_master,learning_projects.lp_group_admin"/>
+
+        <!-- Participants-->
+        <menuitem id="menuitem_partner"
+                  name="Пользователи"
+                  action="action_nocontent_res_partner"
+                  parent="lp_menu"
+                  sequence="4"/>
+
+        <menuitem id="menuitem_lp_invitation_lecturer_master"
+                  name="Отклики бакалавров в проекты"
+                  action="action_nocontent_lp_invitation"
+                  parent="lp_menu"
+                  sequence="5" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_master,learning_projects.lp_group_admin"/>
+
+        <!-- Lecturer and Master-->
+        <menuitem id="menuitem_configuration"
+                  name="Конфигурация"
+                  sequence="7"
+                  parent="lp_menu" groups="learning_projects.lp_group_admin,learning_projects.lp_group_lecturer"/>
+
+        <menuitem id="menuitem_lp_interest"
+                  name="Interest"
+                  parent="menuitem_configuration"
+                  action="lp_interest_act_window"/>
+
+        <!-- Projects lp_group_bachelor -->
+        <menuitem id="menuitem_lp_resume_bachelor"
+                  name="Резюме"
+                  action="action_nocontent_lp_resume"
+                  parent="lp_menu"
+                  sequence="1" groups="learning_projects.lp_group_bachelor"/>
+
+        <menuitem id="menuitem_lp_project_bachelor"
+                  name="Проекты"
+                  action="action_nocontent_lp_project_management_bachelor"
+                  parent="lp_menu"
+                  sequence="2" groups="learning_projects.lp_group_bachelor"/>
+
+        <menuitem name="Доски"
+                  id="project_bachelor"
+                  action="project.open_view_project_all"
+                  parent="lp_menu" groups="learning_projects.lp_group_bachelor"
+                  sequence="3"/>
+
+        <menuitem id="menuitem_lp_invitation_bachelor"
+                  name="Откликнуться на проект"
+                  action="action_nocontent_lp_invitation_bachelor"
+                  parent="lp_menu"
+                  sequence="4" groups="learning_projects.lp_group_bachelor"/>
+
+
+    </data>
+</odoo>

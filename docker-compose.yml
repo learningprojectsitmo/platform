@@ -1,0 +1,53 @@
+version: "3.6"
+services:
+
+  odoo:
+    restart: always
+    container_name: odoo
+    image: ghcr.io/itmolerningproject/odoo16:latest
+    ports:
+      - "80:8069"
+    networks:
+      - default
+    command: -u learning_projects -d odoo
+    volumes:
+      - ./data/odoo:/var/lib/odoo
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      - ./addons:/mnt/extra-addons
+
+  postgres13:
+    restart: always
+    container_name: postgres
+    image: postgres:13
+    ports:
+      - "5433:5432"
+    networks:
+      - default
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_PASSWORD: "WLgxqy4gy94HrJB6LSma"
+      POSTGRES_USER: "odoo"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql/data/pgdata
+
+  pgadmin:
+    restart: always
+    image: dpage/pgadmin4:6.4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@email.com
+      PGADMIN_DEFAULT_PASSWORD: 9tkgWIxz3nknyoIlBQYL
+    ports:
+      - "28080:80"
+
+  maildev:
+    restart: always
+    container_name: maildev
+    image: maildev/maildev:latest
+    ports:
+      - "9000:1080"
+      - "2500:1025"
+
+networks:
+  default:
+    name: new_network

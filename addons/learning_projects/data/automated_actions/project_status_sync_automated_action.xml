@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<odoo noupdate="0">
+    <record model="base.automation" id="status_sync_automated_action">
+        <field name="name">Project status sync with status</field>
+        <field name="type">base.automation</field>
+        <field name="model_id" ref="project.model_project_project"/>
+        <field name="state">code</field>
+        <field name="trigger">on_create_or_write</field>
+        <field name="trigger_field_ids" eval="[
+            (4, ref('project.field_project_project__stage_id')),
+        ]"/>
+        <field name="code">
+# Available variables:
+#  - env: Odoo Environment on which the action is triggered
+#  - model: Odoo Model of the record on which the action is triggered; is a void recordset
+#  - record: record on which the action is triggered; may be void
+#  - records: recordset of all records on which the action is triggered in multi-mode; may be void
+#  - time, datetime, dateutil, timezone: useful Python libraries
+#  - float_compare: Odoo function to compare floats based on specific precisions
+#  - log: log(message, level='info'): logging function to record debug information in ir.logging table
+#  - UserError: Warning Exception to use with raise
+#  - Command: x2Many commands namespace
+# To return an action, assign: action = {...}
+
+project_id = record.id
+stage_id = record.stage_id.id
+
+status_with_stage_id = {
+    int(env.context['project_stage_1_id']): "Unconfirmed",
+    int(env.context['project_stage_2_id']): "OnApproval",
+    int(env.context['project_stage_3_id']): "TeamFormation",
+    int(env.context['project_stage_4_id']): "Teamwork",
+    int(env.context['project_stage_5_id']): "Ready to defend",
+    int(env.context['project_stage_6_id']): "Past",
+}
+
+lp_project = env['lp.project'].search([('project', '=', project_id)])
+if lp_project:
+  if status_with_stage_id.get(stage_id) == "OnApproval":
+    partner = env['res.users'].browse(env.uid).partner_id
+    lp_project.write({'status':status_with_stage_id.get(stage_id),
+                      'confirmed_id': partner.id})
+  else:
+    lp_project.write({'status':status_with_stage_id.get(stage_id)})
+
+        </field>
+    </record>
+</odoo>

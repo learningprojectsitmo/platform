@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "garentii-db",
+            "Group": "Servers",
+            "Port": 5432,
+            "Username": "odoo",
+            "Host": "postgres",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}
