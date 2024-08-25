@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="lp_stages_form_view" model="ir.ui.view">
+            <field name="name">lp_stages.form</field>
+            <field name="model">lp.stages</field>
+            <field name="arch" type="xml">
+                <form string="Интересы">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="lp_stages_tree_view" model="ir.ui.view">
+            <field name="name">lp_stages.tree</field>
+            <field name="model">lp.stages</field>
+            <field name="arch" type="xml">
+                <tree string="Интересы">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+<!--        <record id="lp_stages_search_view" model="ir.ui.view">-->
+<!--            <field name="name">lp_stages.search</field>-->
+<!--            <field name="model">lp.stages</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search string="Интересы">-->
+<!--                    <group expand="1" string="Group By">-->
+<!--                        <filter string="Color" name="color" domain="[]" context="{'group_by':'color'}"/>-->
+<!--                    </group>-->
+<!--                </search>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="lp_stages_act_window" model="ir.actions.act_window">
+            <field name="name">Интересы</field>
+            <field name="res_model">lp.stages</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Нет примеров нажмите здесь, чтобы добавить новый Интерес.
+                </p>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

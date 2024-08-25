@@ -2,10 +2,14 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 from odoo.tools import config as odoo_conf
 
+from .utils import create_notification
+
 PROJECT_STATUS = [
     ('Unconfirmed', 'Не подтверждён'),
-    ('OnApproval', 'На утверждении'),
+    ('OnApproval', 'На утверждении темы'),
     ('TeamFormation', 'Формирование команды'),
+    ('CreationTex', 'Создание ТЗ'),
+    ('OnApprovalTex', 'На утверждении ТЗ'),
     ('Teamwork', 'Работа команды'),
     ('Ready to defend', 'Готовы к защите'),
     ('Past', 'C оценкой')
@@ -36,7 +40,7 @@ class LpProject(models.Model):
     project = fields.Many2one('project.project', string='Канбан', readonly=True, tracking=True)
     stage_id = fields.Many2one(related='project.stage_id', string='Статус', readonly=True, tracking=True)
     tag_ids = fields.Many2many(related='project.tag_ids', string='Навыки', tracking=True)
-    note = fields.Many2many('note.note', string='Записки', tracking=True)
+    # note = fields.Many2many('note.note', string='Записки', tracking=True)
 
     # Team
     message_partner_ids = fields.Many2many(related='project.message_partner_ids', string='message_follower_ids', readonly=True, tracking=True)
@@ -48,7 +52,7 @@ class LpProject(models.Model):
         for record in self:
             record.is_all_invited = record.current_value_users >= record.max_col_users
             if record.is_all_invited:
-                record.sudo().write({'status': 'Teamwork'})
+                record.sudo().write({'status': 'CreationTex'})
 
                 for invitation_id in record.invitation_bachelor_ids.ids:
                     invitation = self.env['lp.invitation.bachelor'].browse(invitation_id)
@@ -81,7 +85,7 @@ class LpProject(models.Model):
             author = self.env['res.users'].browse(rec.create_uid.id).partner_id
             rec.author = author.id
 
-    def send_confirm_project(self):
+    def send_confirm_project_tex(self):
         if not self.project:
             project = self.env['project.project'].create({
                 'name': self.name,
@@ -89,9 +93,12 @@ class LpProject(models.Model):
             })
             project.write({'message_partner_ids': [(4, self.author.id)]})
 
-            self.write({'project': project.id, 'status': 'OnApproval'})
+            self.write({'project': project.id, 'status': 'OnApprovalTex'})
         else:
-            self.write({'status': 'OnApproval'})
+            self.write({'status': 'OnApprovalTex'})
+
+    def send_confirm_project(self):
+        self.write({'status': 'OnApprovalTex'})
 
     def set_work_project(self):
         for project in self:
@@ -102,9 +109,33 @@ class LpProject(models.Model):
         return self.write({'status': 'TeamFormation',
                            'confirmed_id': partner.id})
 
+    def confirm_project_tex(self):
+        partner = self.env['res.users'].browse(self.env.uid).partner_id
+        return self.write({'status': 'Teamwork',
+                           'confirmed_id': partner.id})
+
     def action_view_tasks(self):
         project_id = self.project.id
         return self.project.action_custom_view_tasks(project_id)
 
     def action_team_is_ready(self):
         self.write({'status': 'Ready to defend'})
+
+    def create_invitation_bachelor(self):
+        if self and self.invitation_bachelor_ids.filtered(lambda inv: inv.user_id.id == self.env.uid):
+            notification_type = 'warning'
+            title = 'Ошибка'
+            message = 'Приглашение уже отправленно'
+            return create_notification(notification_type, title, message)
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'lp.invitation.bachelor',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_project_id': self.id,
+                # 'default_invited_status': "waiting",
+            },
+            'options': {'hide_save': True}
+        }

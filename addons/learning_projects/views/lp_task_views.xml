@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="lp_task_form_view" model="ir.ui.view">
+            <field name="name">lp_task.form</field>
+            <field name="model">lp.task</field>
+            <field name="arch" type="xml">
+                <form string="Интересы">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Title"/>
+                            </h1>
+                        </div>
+                        <group>
+                             <group>
+                                     <field name="technical_specification_id"/>
+                                     <field name="assignees" widget="many2many_avatar_user"/>
+                                     <field name="stages_id"/>
+                                </group>
+                            <group>
+                                 <field name="date_start"/>
+                                 <field name="date_end"/>
+                            </group>
+                        </group>
+                        <notebook>
+                             <page string="Описание задачи">
+                                    <group string="Описание задачи">
+                                        <field name="description"/>
+                                    </group>
+                             </page>
+                        </notebook>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="lp_task_tree_view" model="ir.ui.view">
+            <field name="name">lp_task.tree</field>
+            <field name="model">lp.task</field>
+            <field name="arch" type="xml">
+                <tree string="Интересы">
+                    <field colspan="2" name="name"/>
+                    <field colspan="2" name="description"/>
+                    <field colspan="2" name="technical_specification_id"/>
+                    <field colspan="2" name="stages_id"/>
+                    <field colspan="2" name="assignees"  widget="many2many_avatar_user"/>
+                </tree>
+            </field>
+        </record>
+
+<!--        <record id="lp_task_search_view" model="ir.ui.view">-->
+<!--            <field name="name">lp_task.search</field>-->
+<!--            <field name="model">lp.task</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search string="Интересы">-->
+<!--                    <group expand="1" string="Group By">-->
+<!--                        <filter string="Color" name="color" domain="[]" context="{'group_by':'color'}"/>-->
+<!--                    </group>-->
+<!--                </search>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="lp_task_act_window" model="ir.actions.act_window">
+            <field name="name">Интересы</field>
+            <field name="res_model">lp.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Нет примеров нажмите здесь, чтобы добавить новый Интерес.
+                </p>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,15 +1,9 @@
 <?xml version="1.0"?>
 <odoo noupdate="0">
-    <record model="base.automation" id="task_secure_automated_action">
+    <record model="ir.actions.server" id="task_secure_server_action">
         <field name="name">Project task secure</field>
-        <field name="type">base.automation</field>
-        <field name="model_id" ref="project.model_project_task"/>
+        <field name="model_id" ref="model_project_task"/>
         <field name="state">code</field>
-        <field name="trigger">on_create_or_write</field>
-        <field name="trigger_field_ids" eval="[
-            (4, ref('project.field_project_task__user_ids')),
-            (4, ref('project.field_project_task__project_id')),
-        ]"/>
         <field name="code">
 # Available variables:
 #  - env: Odoo Environment on which the action is triggered
@@ -23,8 +17,6 @@
 #  - Command: x2Many commands namespace
 # To return an action, assign: action = {...}
 
-
-
 invited_users_ids = env['res.users'].search([('partner_id', 'in', record.project_id.message_partner_ids.ids)])
 if record.user_ids:
     for user in record.user_ids:
@@ -34,4 +26,17 @@ if record.user_ids:
 
         </field>
     </record>
+
+    <record id="task_secure_automated_action" model="base.automation">
+        <field name="name">Project task secure</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="trigger">on_create_or_write</field>
+        <field name="active">True</field>
+        <field name="action_server_ids" eval="[(6, 0, [ref('task_secure_server_action')])]"/>
+        <field name="trigger_field_ids" eval="[
+            (4, ref('project.field_project_task__user_ids')),
+            (4, ref('project.field_project_task__project_id')),
+        ]"/>
+    </record>
+
 </odoo>

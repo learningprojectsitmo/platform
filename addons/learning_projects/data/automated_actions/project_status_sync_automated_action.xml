@@ -1,14 +1,10 @@
 <?xml version="1.0"?>
-<odoo noupdate="0">
-    <record model="base.automation" id="status_sync_automated_action">
-        <field name="name">Project status sync with status</field>
-        <field name="type">base.automation</field>
-        <field name="model_id" ref="project.model_project_project"/>
+<odoo>
+
+    <record id="status_sync_server_action" model="ir.actions.server">
+        <field name="name">Project stage_id sync with status</field>
+        <field name="model_id" ref="model_project_project"/>
         <field name="state">code</field>
-        <field name="trigger">on_create_or_write</field>
-        <field name="trigger_field_ids" eval="[
-            (4, ref('project.field_project_project__stage_id')),
-        ]"/>
         <field name="code">
 # Available variables:
 #  - env: Odoo Environment on which the action is triggered
@@ -44,5 +40,15 @@ if lp_project:
     lp_project.write({'status':status_with_stage_id.get(stage_id)})
 
         </field>
+    </record>
+
+
+    <record id="status_sync_automated_action" model="base.automation">
+        <field name="name">Project stage_id sync with status</field>
+        <field name="model_id" ref="model_project_project"/>
+        <field name="trigger">on_create_or_write</field>
+        <field name="active">True</field>
+        <field name="action_server_ids" eval="[(6, 0, [ref('status_sync_server_action')])]"/>
+        <field name="trigger_field_ids" eval="[ (4, ref('project.field_project_project__stage_id')), ]"/>
     </record>
 </odoo>

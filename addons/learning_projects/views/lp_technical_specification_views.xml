@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+       <record id="lp_technical_specification_form_view" model="ir.ui.view">
+            <field name="name">lp.technical.specification.form</field>
+            <field name="model">lp.technical.specification</field>
+            <field name="arch" type="xml">
+                <form string="ModelTitle">
+                <header>
+                    <button name="create_project" string="Создать канбан" type="object" />
+                    <button string="Сгенерировать технисечкое задание" type="object" name="generate_pdf"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Title"/>
+                            <label for="target"/>
+                            <field name="target" placeholder="Цель"/>
+                        </h1>
+                    </div>
+
+                        <group string="Сроки выполнения">
+                             <field name="date_start"/>
+                             <field name="date_end"/>
+                        </group>
+                        <group  string="Исполнитель проекта">
+                            <field name="author"/>
+                        </group>
+                        <group string="Термины и сокращения">
+                            <field name="terms_ids"/>
+                        </group>
+                        <group string="Технические требования">
+                            <field name="specification_ids"/>
+                        </group>
+                         <group string="Содержание работы">
+                            <field name="task_stage_ids"/>
+                            <field name="task_task_ids"/>
+                        </group>
+                        <group>
+                            <field name="results"/>
+                             <button string="Сгенерировать технисечкое задание" type="object" name="generate_pdf"/>
+                            <field name="file"  invisible="file == False" widget="file"/>
+                        </group>
+                </sheet>
+                 <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="lp_technical_specification_tree_view" model="ir.ui.view">
+            <field name="name">lp.technical.specification.tree</field>
+            <field name="model">lp.technical.specification</field>
+            <field name="arch" type="xml">
+                <tree string="ModelTitle">
+                    <field name="name"/>
+                    <field name="author"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+<!--        <record id="lp_technical_specification_search_view" model="ir.ui.view">-->
+<!--            <field name="name">lp.technical.specification.search</field>-->
+<!--            <field name="model">lp.technical.specification</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search string="ModelTitle">-->
+<!--                    <group expand="1" string="Group By">-->
+<!--                        <filter string="Example Field" name="example_field" domain="[]" context="{'group_by':'example_field'}"/>-->
+<!--                    </group>-->
+<!--               </search>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="lp_technical_specification_act_window" model="ir.actions.act_window">
+            <field name="name">ТЗ</field>
+            <field name="res_model">lp.technical.specification</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no examples click here to add new ModelTitle.
+                </p>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

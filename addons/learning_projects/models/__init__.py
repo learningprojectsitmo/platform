@@ -5,3 +5,8 @@ from . import lp_resume
 from . import project_project
 from . import res_partner
 from . import res_users
+from . import lp_terms
+from . import lp_technical_specification
+from . import lp_stages
+from . import lp_specification
+from . import lp_task

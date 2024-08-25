@@ -6,10 +6,10 @@
     'assets': {},
     'depends': [
         'base',
-        'base_automation_webhook',
         'mail',
         'contacts',
         'project',
+        'base_automation'
     ],
     'data': [
         'security/lp_security.xml',
@@ -19,7 +19,7 @@
         'data/automated_actions/project_stage_id_sync_automated_action.xml',
         'data/automated_actions/project_task_action.xml',
         'data/smtp_maildev_server.xml',
-        'views/res_partner_views.xml',
+        # 'views/res_partner_views.xml',
         'wizards/views/lp_score_master_wizard.xml',
         'wizards/views/lp_score_lecturer_wizard.xml',
         'wizards/views/lp_load_document_wizard.xml',
@@ -27,9 +27,15 @@
         'views/lp_resume_views.xml',
         'views/lp_invitation_bachelor_views.xml',
         'views/lp_interest_views.xml',
+        'views/lp_technical_specification_views.xml',
+        'views/lp_terms_views.xml',
+        'views/lp_satages_views.xml',
+        'views/lp_specification_views.xml',
+        'views/lp_task_views.xml',
         'views/res_users_views.xml',
         'views/lp_menu.xml',
     ],
     'application': True,
     'installable': True,
+    'auto_install': False,
 }

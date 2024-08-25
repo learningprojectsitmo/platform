@@ -11,16 +11,19 @@
                         <field name="id" invisible="True"/>
                         <field name="status" invisible="True"/>
                         <field name="project" invisible="True"/>
-                        <button name="send_confirm_project" string="Отправить на утверждение" type="object"
-                                attrs="{'invisible': [('status', '!=', 'Unconfirmed')]}" groups="learning_projects.lp_group_master"/>
+                        <button name="send_confirm_project" string="Отправить на утверждение тему" type="object"
+                                invisible="status != 'Unconfirmed'" groups="learning_projects.lp_group_master"/>
+                        <button name="send_confirm_project_tex" string="Отправить ТЗ на утверждение" type="object"
+                                invisible="status != 'Unconfirmed'" groups="learning_projects.lp_group_master"/>
                         <button name="confirm_project" string="Утвердить проект" type="object"
-                                attrs="{'invisible': [('status', '!=', 'OnApproval')]}" groups="learning_projects.lp_group_lecturer, learning_projects.lp_group_admin"/>
+                                invisible="status != 'OnApproval'" groups="learning_projects.lp_group_lecturer, learning_projects.lp_group_admin"/>
                         <button name="action_view_tasks" string="Открыть канбан-доску" type="object" invisible="True" context="{'id': project}"/>
-                        <button name="action_team_is_ready" string="Готовы к защите" type="object" attrs="{'invisible': [('status', '!=', 'Teamwork')]}"
+                        <button name="action_team_is_ready" string="Готовы к защите" type="object" invisible="status != 'Teamwork'"
                                 groups="learning_projects.lp_group_master, learning_projects.lp_group_admin"/>
-                        <button string="Загрузить отчёт" type="action" name="%(learning_projects.load_document_wizard)d" class="oe_highlight" attrs="{'invisible': [('status', '!=', 'Teamwork')]}"/>
+                        <button string="Загрузить отчёт" type="action" name="%(learning_projects.load_document_wizard)d" class="oe_highlight" invisible="status != 'Teamwork'"/>
                         <button string="Отправить в работу проект" type="object" groups="learning_projects.lp_group_admin" name="set_work_project" class="oe_highlight"
-                                attrs="{'invisible': [('status', '!=', 'TeamFormation')]}"/>
+                                invisible="status != 'TeamFormation'"/>
+                        <button string="Создать отклик" type="object" name="create_invitation_bachelor" groups="learning_projects.lp_group_bachelor" invisible="status != 'TeamFormation'"/>
                     </header>
                     <sheet>
                         <field name="logo" widget="image" class="oe_avatar"/>
@@ -46,15 +49,19 @@
                                         <field name="priority"/>
                                         <field name="resume"/>
                                         <field name="number_groups"/>
-                                        <field name="invited_status"  decoration-success="invited_status  in ('invited', 'invited_for_other_priority')"
-                           decoration-info="invited_status not in ('invited_all', 'draft')" />
+                                        <field name="invited_status" decoration-success="invited_status  in ('invited', 'on_the_team', 'invited_for_other_priority')"
+                                               decoration-info="invited_status not in ('invited_all', 'draft', 'invited_delete')"/>
                                         <!-- todo hide -->
                                         <button name="action_confirm_invitation" string="Добавить участника" type="object"
-                                                attrs="{'invisible': ['|', ('is_all_invited' , '=', True), ('invited_status', 'in', ['invited','invited_for_other_priority']) ]}"
+                                                invisible="is_all_invited == True or invited_status == 'invited' or invited_status == 'on_the_team' or invited_status == 'invited_for_other_priority'"
                                                 groups="learning_projects.lp_group_master, learning_projects.lp_group_admin"
                                                 confirm="Вы уверены?"/>
-                                        <button name="action_reject_invitation" string="Отклонить участника" type="object"
-                                                attrs="{'invisible': [('invited_status', 'not in', ['invited']) ]}"
+                                        <button name="action_reject_invitation" string="Убрать из команды участника" type="object"
+                                                invisible="invited_status not in ('on_the_team')"
+                                                groups="learning_projects.lp_group_master, learning_projects.lp_group_admin"
+                                                confirm="Вы уверены?"/>
+                                        <button name="action_reject_invitation" string="Удалить приглашение" type="object"
+                                                invisible="invited_status not in ('invited_delete')"
                                                 groups="learning_projects.lp_group_master, learning_projects.lp_group_admin"
                                                 confirm="Вы уверены?"/>
                                     </tree>
@@ -74,9 +81,9 @@
                                         <field name="score_master"/>
                                         <field name="document_ids"/>
                                         <button string="Поставить оценку" type="object" name="action_score_master" class="oe_highlight" groups="learning_projects.lp_group_master"
-                                                attrs="{'invisible': ['&amp;',('document_ids', '!=', False), ('is_bachelor', '!=', True )]}"/>
+                                                invisible="document_ids != False and is_bachelor == False"/>
                                         <button string="Поставить оценку" type="object" name="action_score_lecturer" class="oe_highlight" groups="learning_projects.lp_group_lecturer"
-                                                attrs="{'invisible': [('document_ids', '!=', False)]}"/>
+                                                invisible="document_ids != False"/>
                                     </tree>
                                 </field>
                             </page>
@@ -94,9 +101,9 @@
                                     <field name="stage_id"/>
                                 </group>
                             </page>
-                            <page string="Документация">
-                                <field name="note"/>
-                            </page>
+                            <!--                            <page string="Документация">-->
+                            <!--                                <field name="note"/>-->
+                            <!--                            </page>-->
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -144,10 +151,12 @@
                                         <field name="display_name"/>
                                     </strong>
                                     <div t-if="record.author.value">
-                                        Автор: <t t-esc="record.author.value"/>
+                                        Автор:
+                                        <t t-esc="record.author.value"/>
                                     </div>
                                     <div class="project_description" t-if="record.required_participants.value">
-                                        Необходимые участники: <field name="required_participants" widget="html" options="{'collaborative': true}"/>
+                                        Необходимые участники:
+                                        <field name="required_participants" widget="html" options="{'collaborative': true}"/>
                                     </div>
                                     <style>.project_description {
                                         max-height: 100px;
@@ -155,7 +164,8 @@
                                         white-space: pre-line;
                                         overflow-y: hidden;
                                         text-overflow: ellipsis;
-                                    }</style>
+                                        }
+                                    </style>
                                     <div t-if="record.tag_ids.value">
                                         <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
                                     </div>

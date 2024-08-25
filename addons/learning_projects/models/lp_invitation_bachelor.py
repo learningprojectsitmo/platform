@@ -1,30 +1,16 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from .utils import create_notification
 
 STATUS = [
     ("draft", "Черновик"),
     ("waiting", "В ожидании"),
     ("invited_all", "Проект уже сформирован"),
     ("invited", "Приглашен"),
+    ("invited_delete", "Приглашение удалено"),
+    ("on_the_team", "В команде"),
     ("invited_for_other_priority", "Приглашен по другому приоритету"),
 ]
-
-
-def create_notification(notification_type, title, message):
-    return {
-        'type': 'ir.actions.client',
-        'tag': 'display_notification',
-        'params': {
-            'title': title,
-            'message': message,
-            'sticky': False,
-            'type': notification_type,
-            'fadeout': 'slow',
-            'next': {
-                'type': 'ir.actions.act_window_close',
-            }
-        }
-    }
 
 
 class InvitationBachelor(models.Model):
@@ -36,8 +22,8 @@ class InvitationBachelor(models.Model):
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user)
 
     # bachelor
-    priority = fields.Integer(string="Приоритет", default=1,  tracking=True, required=True)
-    project_id = fields.Many2one('lp.project', string="Проект",  tracking=True, required=True)
+    priority = fields.Integer(string="Приоритет", default=1, tracking=True, required=True)
+    project_id = fields.Many2one('lp.project', string="Проект", tracking=True, required=True)
     is_all_invited = fields.Boolean(related='project_id.is_all_invited', string="is_all_invited")
     resume = fields.Many2one('lp.resume', string="Резюме", required=True)  # compute='_compute_resume',
     resume_author = fields.Many2one(related='resume.author', string="Отправитель", store=True, readonly=True)
@@ -46,6 +32,17 @@ class InvitationBachelor(models.Model):
 
     invited_by = fields.Many2one('res.partner', string="Приглашён кем", readonly=True, tracking=True)
     invited_status = fields.Selection(STATUS, string="Статус", default="draft", readonly=True, tracking=True)
+
+    @api.constrains('user_id', 'project_id')
+    def _check_project_availability(self):
+        for invitation in self:
+            existing_invitation = self.env['lp.invitation.bachelor'].search([
+                ('user_id', '=', invitation.user_id.id),
+                ('project_id', '=', invitation.project_id.id),
+                ('id', '!=', invitation.id),  # Exclude the current invitation
+            ])
+            if existing_invitation:
+                raise ValidationError(_('This user has already responded to this project.'))
 
     @api.model
     def create(self, vals):
@@ -105,31 +102,46 @@ class InvitationBachelor(models.Model):
                 raise ValidationError("Вы не можете изменять или удалять свои записи со статусом 'ожидание'")
 
     def action_confirm_invitation(self):
-        resume_author = self.resume_author.id
-        lp_p = self.project_id
-        if lp_p.is_all_invited:
-            raise ValidationError('Вы уже пригласили {max_col_users}'.format(max_col_users=lp_p.max_col_users))
-
-        lp_p.project.message_subscribe(partner_ids=[self.resume_author.id])
-        new_current_value_users = lp_p.current_value_users + 1
-        lp_p.write({'current_value_users': new_current_value_users})
-
-        self.resume_author.sudo().write({'in_project': True, 'lp_project_id': lp_p.id})
-
         self.sudo().write({
             'invited_status': 'invited',
             'invited_by': self.env['res.users'].browse(self.env.uid).partner_id,
         })
 
-        invitation = self.env['lp.invitation.bachelor'].search([('resume_author', '=', resume_author), ('id', '!=', self.id)], limit=1)
-        if invitation is not None:
-            invitation.sudo().write({'invited_status': 'invited_for_other_priority'})
+    def action_delete_confirm_invitation(self):
+        if self.invited_status == 'invited':
+            self.sudo().write({
+                'invited_status': 'invited_delete',
+                'invited_by': self.env['res.users'].browse(self.env.uid).partner_id,
+            })
+
+    def action_add_in_team(self):
+        resume_author = self.resume_author.id
+        lp_p = self.project_id
+        if lp_p.is_all_invited:
+            raise ValidationError('Вы уже пригласили {max_col_users}'.format(max_col_users=lp_p.max_col_users))
+
+        if self.invited_status == 'invited':
+
+            lp_p.project.sudo().message_subscribe(partner_ids=[self.resume_author.id])
+            new_current_value_users = lp_p.current_value_users + 1
+            lp_p.sudo().write({'current_value_users': new_current_value_users})
+
+            self.resume_author.sudo().write({'in_project': True, 'lp_project_id': lp_p.id})
+
+            self.sudo().write({
+                'invited_status': 'on_the_team',
+                'invited_by': self.env['res.users'].browse(self.env.uid).partner_id,
+            })
+
+            invitation = self.env['lp.invitation.bachelor'].search([('resume_author', '=', resume_author), ('id', '!=', self.id)], limit=1)
+            if invitation is not None:
+                invitation.sudo().write({'invited_status': 'invited_for_other_priority'})
 
     def action_reject_invitation(self):
         resume_author = self.resume_author.id
         lp_p = self.project_id
-        #if lp_p.is_all_invited:
-        #    raise ValidationError('Вы уже пригласили {max_col_users}'.format(max_col_users=lp_p.max_col_users))
+        if lp_p.is_all_invited:
+            raise ValidationError('Вы уже пригласили {max_col_users}'.format(max_col_users=lp_p.max_col_users))
 
         lp_p.project.message_unsubscribe(partner_ids=[self.resume_author.id])
 
@@ -137,8 +149,8 @@ class InvitationBachelor(models.Model):
         lp_p.project.sudo().write({'with_out': True})
         if lp_p.is_all_invited:
             lp_p.sudo().write({'current_value_users': new_current_value_users,
-                    'status': 'TeamFormation',
-                    "is_all_invited": False})
+                               'status': 'TeamFormation',
+                               "is_all_invited": False})
 
             for invitation_id in lp_p.invitation_bachelor_ids.ids:
                 invitation = self.env['lp.invitation.bachelor'].browse(invitation_id)
@@ -188,5 +200,5 @@ class InvitationBachelor(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            result.append((record['id'], record.resume.name))
+            result.append([record['id'], record.resume.name])
         return result

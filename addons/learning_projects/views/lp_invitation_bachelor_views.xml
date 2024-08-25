@@ -8,18 +8,22 @@
             <field name="arch" type="xml">
                 <form string="Отклики">
                     <header>
-                        <field name="invited_status" invisible="True"/>
-                        <button name="action_send_invitation" string="Отправить" type="object" attrs="{'invisible': [('invited_status', 'not in', 'draft')]}"
+                        <field name="invited_status" invisible="1"/>
+                        <button name="action_send_invitation" string="Отправить" type="object" invisible="invited_status not in 'draft'"
                                 groups="learning_projects.lp_group_bachelor"/>
-                        <button name="action_draft_invitation" string="Сделать черновиком" type="object" attrs="{'invisible': [('invited_status', 'not in', ['waiting', 'invited_all'])]}"
+                        <button name="action_draft_invitation" string="Сделать черновиком" type="object" invisible="invited_status not in ['waiting', 'invited_all', 'invited_delete']"
                                 groups="learning_projects.lp_group_bachelor"/>
+                        <button name="action_add_in_team" string="Вступить в команду" type="object"
+                                invisible="invited_status != 'invited'"
+                                groups="learning_projects.lp_group_bachelor"
+                                confirm="Вы уверены?"/>
                     </header>
                     <sheet>
                         <group string="Информация о студенте">
-                            <field name="priority" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                            <field name="project_id" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                            <field name="resume" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                            <field name="motivation" widget="html" options="{'collaborative': true}" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
+                            <field name="priority" readonly="invited_status != 'draft'"/>
+                            <field name="project_id" readonly="invited_status != 'draft'"/>
+                            <field name="resume" readonly="invited_status != 'draft'"/>
+                            <field name="motivation" widget="html" options="{'collaborative': true}" readonly="invited_status != 'draft'"/>
                             <field name="resume_author"/>
                         </group>
                     </sheet>
@@ -36,13 +40,18 @@
             <field name="model">lp.invitation.bachelor</field>
             <field name="arch" type="xml">
                 <tree string="Own Invitations Tree">
-                    <field name="priority" widget="handle"  groups="learning_projects.lp_group_bachelor" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                    <field name="priority" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin,learning_projects.lp_group_master" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                    <field name="project_id" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                    <field name="resume" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                    <field name="number_groups" attrs="{'readonly':[('invited_status','!=','draft')]}"/>
-                    <field name="invited_status" widget="badge" decoration-success="invited_status  in ('invited', 'invited_for_other_priority')"
-                           decoration-info="invited_status not in ('invited_all', 'draft')"  attrs="{'readonly':[('invited_status','!=','draft')]}"/>
+                    <field name="priority" widget="handle" groups="learning_projects.lp_group_bachelor" readonly="invited_status != 'draft'"/>
+                    <field name="priority" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin,learning_projects.lp_group_master"
+                           readonly="invited_status != 'draft'"/>
+                    <field name="project_id" readonly="invited_status !='draft'"/>
+                    <field name="resume" readonly=" invited_status != 'draft' "/>
+                    <field name="number_groups" readonly="invited_status != 'draft'"/>
+                    <field name="invited_status" widget="badge" decoration-success="invited_status  in ('invited','on_the_team', 'invited_for_other_priority')"
+                           decoration-info="invited_status not in ('invited_all', 'invited_delete', 'draft')" readonly="invited_status!='draft'"/>
+                    <button name="action_add_in_team" string="Вступить в команду" type="object"
+                            invisible="invited_status != 'invited'"
+                            groups="learning_projects.lp_group_bachelor"
+                            confirm="Вы уверены?"/>
                 </tree>
             </field>
         </record>
@@ -55,8 +64,10 @@
                     <field name="project_id" string="Проект"/>
                     <field name="number_groups" string="Проект"/>
                     <group expand="0" string="Group By">
-                        <filter string="Проект" name="group_project_id" context="{'group_by': 'project_id'}" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin,learning_projects.lp_group_master"/>
-                        <filter string="Резюме" name="group_resume" context="{'group_by': 'resume'}" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin,learning_projects.lp_group_master"/>
+                        <filter string="Проект" name="group_project_id" context="{'group_by': 'project_id'}"
+                                groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin,learning_projects.lp_group_master"/>
+                        <filter string="Резюме" name="group_resume" context="{'group_by': 'resume'}"
+                                groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_admin,learning_projects.lp_group_master"/>
                     </group>
                 </search>
             </field>

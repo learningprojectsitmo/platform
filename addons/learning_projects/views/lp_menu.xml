@@ -28,7 +28,7 @@
                   action="project.open_view_project_all"
                   parent="lp_menu" groups="learning_projects.lp_group_master"
                   sequence="2"/>
-        
+
         <menuitem id="menuitem_lp_project_lecturer_admin"
                   name="Проекты"
                   action="action_nocontent_lp_project_management_lecturer"
@@ -49,11 +49,11 @@
                   sequence="3" groups="learning_projects.lp_group_lecturer,learning_projects.lp_group_master,learning_projects.lp_group_admin"/>
 
         <!-- Participants-->
-        <menuitem id="menuitem_partner"
-                  name="Пользователи"
-                  action="action_nocontent_res_partner"
-                  parent="lp_menu"
-                  sequence="4"/>
+        <!--        <menuitem id="menuitem_partner"-->
+        <!--                  name="Пользователи"-->
+        <!--                  action="action_nocontent_res_partner"-->
+        <!--                  parent="lp_menu"-->
+        <!--                  sequence="4"/>-->
 
         <menuitem id="menuitem_lp_invitation_lecturer_master"
                   name="Отклики бакалавров в проекты"
@@ -97,6 +97,8 @@
                   parent="lp_menu"
                   sequence="4" groups="learning_projects.lp_group_bachelor"/>
 
+
+        <menuitem name="ТЗ" id="lp_technical_specification_menu" parent="lp_menu" action="lp_technical_specification_act_window"/>
 
     </data>
 </odoo>

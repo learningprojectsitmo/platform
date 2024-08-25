@@ -7,15 +7,18 @@
             <field name="model">lp.resume</field>
             <field name="arch" type="xml">
                 <form string="Резюме">
+                    <header>
+                        <button string="Generate SV" type="object" name="generate_pdf"/>
+                    </header>
                     <sheet>
-                        <group string="Информация о студенте">
-                            <field name="author"/>
-                            <field name="group"/>
-                        </group>
                         <group string="Навыки и опыт студента">
                             <field name="short_description"/>
                             <field name="skills" widget="many2many_tags" options="{'color_field': 'color'}" placeholder="С++..."/>
-                            <field name="areas_of_interest" widget="many2many_tags" options="{'color_field': 'color'}" placeholder="Медицина..."/>
+                            <!--                            <field name="areas_of_interest" widget="many2many_tags" options="{'color_field': 'color'}" placeholder="Медицина..."/>-->
+                        </group>
+                        <group string="Информация о студенте">
+                            <field name="author"/>
+                            <field name="group"/>
                         </group>
                     </sheet>
                     <div class="oe_chatter">
@@ -31,9 +34,13 @@
             <field name="model">lp.resume</field>
             <field name="arch" type="xml">
                 <tree string="Резюме Таблица">
+                    <header>
+                        <button string="Массовое скачивание документов" type="object" name="mus_download_cv"/>
+                    </header>
                     <field name="author"/>
-                    <field name="skills" widget="many2many_tags" options="{'color_field': 'color'}" placeholder="С++..."/>
-                    <field name="areas_of_interest" widget="many2many_tags" options="{'color_field': 'color'}" placeholder="Медицина..."/>
+                    <field name="skills" widget="many2many_tags" options="{'color_field': 'color'}"
+                           placeholder="С++..."/>
+                    <!--                    <field name="areas_of_interest" widget="many2many_tags" options="{'color_field': 'color'}" placeholder="Медицина..."/>-->
                 </tree>
             </field>
         </record>
@@ -47,9 +54,10 @@
                     <field name="author"/>
                     <field name="name"/>
                     <field name="group"/>
-                    <field name="short_description" type="html" options="{'collaborative': true}" placeholder="O себе и опыт..."/>
+                    <field name="short_description" type="html" options="{'collaborative': true}"
+                           placeholder="O себе и опыт..."/>
                     <field name="skills"/>
-                    <field name="areas_of_interest"/>
+                    <!--                    <field name="areas_of_interest"/>-->
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click">
@@ -65,10 +73,13 @@
                                         <field name="display_name"/>
                                     </strong>
                                     <div t-if="record.author.value">
-                                        Автор: <t t-esc="record.author.value"/>
+                                        Автор:
+                                        <t t-esc="record.author.value"/>
                                     </div>
                                     <div class="resume_description" t-if="record.short_description.value">
-                                        О себе: <field name="short_description" widget="html" options="{'collaborative': true}"/>
+                                        О себе:
+                                        <field name="short_description" widget="html"
+                                               options="{'collaborative': true}"/>
                                     </div>
                                     <style>.resume_description {
                                         max-height: 100px;
@@ -76,9 +87,18 @@
                                         white-space: pre-line;
                                         overflow-y: hidden;
                                         text-overflow: ellipsis;
-                                    }</style>
+                                        margin-bottom: 10px;
+                                        }
+
+                                        .skills {
+                                        max-height: 200px;
+                                        width: 300px;
+                                        overflow-y: hidden;
+                                        }
+                                    </style>
                                     <div t-if="record.skills.value">
-                                        <field name="skills" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': False}"/>
+                                        <field class="skills" name="skills" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': False}"/>
                                     </div>
                                 </div>
 
