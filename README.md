@@ -2,7 +2,7 @@
 
 # Wiki
 
-[Wiki](https://github.com/itmolerningproject/platform/blob/main/wiki/main.md)
+[Wiki](/wiki/main.md)
 
 # Prod system
 
