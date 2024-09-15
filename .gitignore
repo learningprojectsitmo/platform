@@ -11,5 +11,4 @@ traefik
 strapi-dump
 tmp!/metricks/
 /answer/
-/wiki/
 /envs/*.env
