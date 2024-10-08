@@ -25,9 +25,9 @@ status_with_stage_id = {
     int(env.context['project_stage_1_id']): "Unconfirmed",
     int(env.context['project_stage_2_id']): "OnApproval",
     int(env.context['project_stage_3_id']): "TeamFormation",
-    int(env.context['project_stage_4_id']): "Teamwork",
-    int(env.context['project_stage_5_id']): "CreationTex",
-    int(env.context['project_stage_6_id']): "OnApprovalTex",
+    int(env.context['project_stage_4_id']): "CreationTex",
+    int(env.context['project_stage_5_id']): "OnApprovalTex",
+    int(env.context['project_stage_6_id']): "Teamwork",
     int(env.context['project_stage_7_id']): "Ready to defend",
     int(env.context['project_stage_8_id']): "Past",
 }
