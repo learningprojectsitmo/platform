@@ -98,7 +98,7 @@ class LpProject(models.Model):
             self.write({'status': 'OnApprovalTex'})
 
     def send_confirm_project(self):
-        self.write({'status': 'OnApprovalTex'})
+        self.write({'status': 'OnApproval'})
 
     def set_work_project(self):
         for project in self:
