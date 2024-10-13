@@ -51,7 +51,8 @@ services:
   odoo:
     restart: always
     container_name: odoo
-    image: ghcr.io/itmolerningproject/odoo16:latest
+#    image: ghcr.io/itmolerningproject/odoo16:latest
+    image: odoo:17.0
     command: -u learning_projects -d odoo
     volumes:
       - ./data/odoo:/var/lib/odoo
