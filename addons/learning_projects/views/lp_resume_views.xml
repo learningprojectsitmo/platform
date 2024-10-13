@@ -110,7 +110,7 @@
         </record>
 
         <record id="action_nocontent_lp_resume" model="ir.actions.act_window">
-            <field name="name">Resume</field>
+            <field name="name">Резюме</field>
             <field name="res_model">lp.resume</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="help" type="html">

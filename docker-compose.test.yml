@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     ports:
       #- '80:80'
-      #- '81:81'
+      - '81:81'
       - '443:443'
     volumes:
       - ./data/nginxm/data:/data
@@ -95,20 +95,6 @@ services:
     depends_on:
       - vpn
       - dps
-
-  dps:
-    image: defreitas/dns-proxy-server
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/resolv.conf:/etc/resolv.conf
-    environment:
-      - MG_LOG_LEVEL=ERROR
-    hostname: dns.test.itmo-learning-projects.ru
-    networks:
-      default:
-        ipv4_address: 172.177.0.10
-    depends_on:
-      - vpn
 
 networks:
   default:

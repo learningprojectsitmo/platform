@@ -206,7 +206,7 @@
         </record>
 
         <record id="action_nocontent_lp_project_management" model="ir.actions.act_window">
-            <field name="name">Управление проектами</field>
+            <field name="name">Управление проектами Магистрант и Преподаватель Меню</field>
             <field name="res_model">lp.project</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="help" type="html">
@@ -217,7 +217,7 @@
         </record>
 
         <record id="action_nocontent_lp_project_management_lecturer" model="ir.actions.act_window">
-            <field name="name">Управление проектами</field>
+            <field name="name">Управление проектами Преподаватель</field>
             <field name="res_model">lp.project</field>
             <field name="context">{'search_default_group_status': 1}</field>
             <field name="view_mode">kanban,tree,form</field>
@@ -229,7 +229,7 @@
         </record>
 
         <record id="action_nocontent_lp_project_management_bachelor" model="ir.actions.act_window">
-            <field name="name">Управление проектами</field>
+            <field name="name">Управление проектами Бакалавр</field>
             <field name="res_model">lp.project</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="help" type="html">
