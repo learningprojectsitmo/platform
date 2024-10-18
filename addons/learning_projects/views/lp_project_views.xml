@@ -52,7 +52,7 @@
                                         <field name="invited_status" decoration-success="invited_status  in ('invited', 'on_the_team', 'invited_for_other_priority')"
                                                decoration-info="invited_status not in ('invited_all', 'draft', 'invited_delete')"/>
                                         <!-- todo hide -->
-                                        <button name="action_confirm_invitation" string="Добавить участника" type="object"
+                                        <button name="action_confirm_invitation" string="Отправить приглашение" type="object"
                                                 invisible="is_all_invited == True or invited_status == 'invited' or invited_status == 'on_the_team' or invited_status == 'invited_for_other_priority'"
                                                 groups="learning_projects.lp_group_master, learning_projects.lp_group_admin"
                                                 confirm="Вы уверены?"/>
