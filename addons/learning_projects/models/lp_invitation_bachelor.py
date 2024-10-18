@@ -63,7 +63,7 @@ class InvitationBachelor(models.Model):
     def _check_priority(self):
         priority = self.priority
         if priority != 1 and priority != 2:
-            raise ValidationError('Priority 1 or 2 ' + str(priority))
+            raise ValidationError('The priority can only be 1 or 2.')
 
     @api.onchange('project_id')
     def onchange_project_id(self):
@@ -82,10 +82,10 @@ class InvitationBachelor(models.Model):
 
     def change_priority(self, priority):
         invitation = self.env['lp.invitation.bachelor'].search([('create_uid', '=', self.env.uid)], limit=1)
-        if invitation is not None:
-            if priority == 1 and invitation.priority != 2:
+        if invitation:
+            if priority == 1 and invitation.priority == 1:
                 invitation.write({'priority': 2})
-            elif priority == 2 and invitation.priority != 1:
+            elif priority == 2 and invitation.priority == 2:
                 invitation.write({'priority': 1})
 
     def validate_count_creations(self):
