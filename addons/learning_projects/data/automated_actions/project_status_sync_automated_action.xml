@@ -21,15 +21,17 @@
 project_id = record.id
 stage_id = record.stage_id.id
 
+params = env['ir.config_parameter'].sudo()
+
 status_with_stage_id = {
-    int(env.context['project_stage_1_id']): "Unconfirmed",
-    int(env.context['project_stage_2_id']): "OnApproval",
-    int(env.context['project_stage_3_id']): "TeamFormation",
-    int(env.context['project_stage_4_id']): "CreationTex",
-    int(env.context['project_stage_5_id']): "OnApprovalTex",
-    int(env.context['project_stage_6_id']): "Teamwork",
-    int(env.context['project_stage_7_id']): "Ready to defend",
-    int(env.context['project_stage_8_id']): "Past",
+    int(params.get_param('project_stage_1_id')): "Unconfirmed",
+    int(params.get_param('project_stage_2_id')): "OnApproval",
+    int(params.get_param('project_stage_3_id')): "TeamFormation",
+    int(params.get_param('project_stage_4_id')): "CreationTex",
+    int(params.get_param('project_stage_5_id')): "OnApprovalTex",
+    int(params.get_param('project_stage_6_id')): "Teamwork",
+    int(params.get_param('project_stage_7_id')): "Ready to defend",
+    int(params.get_param('project_stage_8_id')): "Past",
 }
 
 lp_project = env['lp.project'].search([('project', '=', project_id)])
