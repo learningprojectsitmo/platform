@@ -21,20 +21,22 @@
 project_id = record.project.id
 status = record.status
 
-status_by_stage_id = {
-    'Unconfirmed': int(env.context['project_stage_1_id']),
-    'OnApproval': int(env.context['project_stage_2_id']),
-    'TeamFormation': int(env.context['project_stage_3_id']),
-    'CreationTex':  int(env.context['project_stage_4_id']),
-    'OnApprovalTex': int(env.context['project_stage_5_id']),
-    'Teamwork': int(env.context['project_stage_6_id']),
-    'Ready to defend': int(env.context['project_stage_7_id']),
-    'Past': int(env.context['project_stage_8_id']),
+status_by_stage_name = {
+    'Unconfirmed': 'Не подтвержденные',
+    'OnApproval': 'На утверждении',
+    'TeamFormation': 'Формирование команды',
+    'CreationTex': 'Создание ТЗ',
+    'OnApprovalTex': 'На утверждении ТЗ',
+    'Teamwork': 'Работа команды',
+    'Ready to defend': 'Готовы к защите',
+    'Past': 'С оценкой'
 }
 
-project_project = env['project.project'].search([('id', '=', project_id)])
-if project_project:
-    project_project.sudo().write({'stage_id': int(status_by_stage_id.get(status))})
+project_stage = env['project.project.stage'].search([('name', '=', status)], limit=1)
+if project_stage:
+    project_project = env['project.project'].search([('id', '=', project_id)])
+    if project_project:
+        project_project.sudo().write({'stage_id': project_stage.id})
         </field>
     </record>
 
