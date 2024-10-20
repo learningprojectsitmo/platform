@@ -21,22 +21,22 @@
 project_id = record.project.id
 status = record.status
 
-status_by_stage_name = {
-    'Unconfirmed': 'Не подтвержденные',
-    'OnApproval': 'На утверждении',
-    'TeamFormation': 'Формирование команды',
-    'CreationTex': 'Создание ТЗ',
-    'OnApprovalTex': 'На утверждении ТЗ',
-    'Teamwork': 'Работа команды',
-    'Ready to defend': 'Готовы к защите',
-    'Past': 'С оценкой'
+params = env['ir.config_parameter'].sudo()
+
+status_by_stage_id = {
+    'Unconfirmed': int(params.get_param('project_stage_1_id')),
+    'OnApproval': int(params.get_param('project_stage_2_id')),
+    'TeamFormation': int(params.get_param('project_stage_3_id')),
+    'CreationTex': int(params.get_param('project_stage_4_id')),
+    'OnApprovalTex': int(params.get_param('project_stage_5_id')),
+    'Teamwork': int(params.get_param('project_stage_6_id')),
+    'Ready to defend': int(params.get_param('project_stage_7_id')),
+    'Past': int(params.get_param('project_stage_8_id')),
 }
 
-project_stage = env['project.project.stage'].search([('name', '=', status)], limit=1)
-if project_stage:
-    project_project = env['project.project'].search([('id', '=', project_id)])
-    if project_project:
-        project_project.sudo().write({'stage_id': project_stage.id})
+project_project = env['project.project'].search([('id', '=', project_id)])
+if project_project:
+    project_project.sudo().write({'stage_id': int(status_by_stage_id.get(status))})
         </field>
     </record>
 
