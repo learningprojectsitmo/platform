@@ -47,6 +47,7 @@ class InvitationBachelor(models.Model):
     @api.model
     def create(self, vals):
         self.validate_count_creations()
+        self.change_priority(vals.get("priority"))
         return super(InvitationBachelor, self).create(vals)
 
     def write(self, vals):
@@ -63,7 +64,7 @@ class InvitationBachelor(models.Model):
     def _check_priority(self):
         priority = self.priority
         if priority != 1 and priority != 2:
-            raise ValidationError('The priority can only be 1 or 2.')
+            raise ValidationError('Приоритет может быть равен только 1 или 2.')
 
     @api.onchange('project_id')
     def onchange_project_id(self):
@@ -92,7 +93,9 @@ class InvitationBachelor(models.Model):
         user = self.env.user
         invitations = self.env['lp.invitation.bachelor'].search([('create_uid', '=', self.env.uid)])
         if user.has_group('learning_projects.lp_group_bachelor') and len(invitations) > 1:
-            raise ValidationError("Бакалавр может создать только 2 приглашения")
+            raise ValidationError("Вы можете создать только 2 приглашения")
+        elif len(invitations) == 1 and invitations.invited_status == 'on_the_team':
+            raise ValidationError("Вы уже состоите в команде")
 
     @api.constrains('invited_status', 'project_id', 'resume')
     def _check_status(self):
