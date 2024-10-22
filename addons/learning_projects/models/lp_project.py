@@ -1,6 +1,5 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-from odoo.tools import config as odoo_conf
 
 from .utils import create_notification
 
@@ -93,17 +92,18 @@ class LpProject(models.Model):
             rec.author = author.id
 
     def send_confirm_project_tex(self):
-        self.write({'status': 'TeamFormation'})
+        self.write({'status': 'OnApprovalTex'})
 
     def send_confirm_project(self):
+        params = self.env['ir.config_parameter'].sudo()
+        project_stage_2_id = int(params.get_param('project_stage_2_id'))
         if not self.project:
             project = self.env['project.project'].sudo().create({
                 'name': self.name,
-                'stage_id': int(odoo_conf['project_stage_2_id'])
+                'stage_id': project_stage_2_id
             })
             project.write({'message_partner_ids': [(4, self.author.id)]})
-
-            self.write({'project': project.id, 'status': 'OnApprovalTex'})
+            self.write({'project': project.id, 'status': 'OnApproval'})
         else:
             self.write({'status': 'OnApproval'})
 

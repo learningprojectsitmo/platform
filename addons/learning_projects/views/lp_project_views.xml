@@ -99,7 +99,7 @@
                                     <field name="is_all_invited"/>
                                 </group>
                             </page>
-                            <page string="Настройки Конбан доски">
+                            <page string="Настройки Канбан доски">
                                 <group string="Канбан доска" width="50">
                                     <field name="project"/>
                                     <field name="stage_id"/>
