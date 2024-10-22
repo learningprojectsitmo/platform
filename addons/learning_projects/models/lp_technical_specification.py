@@ -1,5 +1,4 @@
 from odoo import fields, models, api
-from odoo.tools import config as odoo_conf
 # from .utils import generate_technical_specification_pdf
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table
@@ -51,6 +50,8 @@ class TechnicalSpecification(models.Model):
             rec.author = author.id
 
     def create_project(self):
+        params = self.env['ir.config_parameter'].sudo()
+        project_stage_2_id = int(params.get_param('project_stage_2_id'))
         type_ids = []
 
         for lp_stages in self.task_stage_ids:
@@ -59,7 +60,7 @@ class TechnicalSpecification(models.Model):
 
         project = self.env['project.project'].sudo().create({
             'name': self.name,
-            'stage_id': int(odoo_conf['project_stage_2_id']),
+            'stage_id': project_stage_2_id,
             'type_ids': type_ids,
         })
         project.sudo().write({'message_partner_ids': [(4, self.author.id)]})

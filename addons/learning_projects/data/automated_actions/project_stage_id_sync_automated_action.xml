@@ -21,15 +21,17 @@
 project_id = record.project.id
 status = record.status
 
+params = env['ir.config_parameter'].sudo()
+
 status_by_stage_id = {
-    'Unconfirmed': int(env.context['project_stage_1_id']),
-    'OnApproval': int(env.context['project_stage_2_id']),
-    'TeamFormation': int(env.context['project_stage_3_id']),
-    'CreationTex':  int(env.context['project_stage_4_id']),
-    'OnApprovalTex': int(env.context['project_stage_5_id']),
-    'Teamwork': int(env.context['project_stage_6_id']),
-    'Ready to defend': int(env.context['project_stage_7_id']),
-    'Past': int(env.context['project_stage_8_id']),
+    'Unconfirmed': int(params.get_param('project_stage_1_id')),
+    'OnApproval': int(params.get_param('project_stage_2_id')),
+    'TeamFormation': int(params.get_param('project_stage_3_id')),
+    'CreationTex': int(params.get_param('project_stage_4_id')),
+    'OnApprovalTex': int(params.get_param('project_stage_5_id')),
+    'Teamwork': int(params.get_param('project_stage_6_id')),
+    'Ready to defend': int(params.get_param('project_stage_7_id')),
+    'Past': int(params.get_param('project_stage_8_id')),
 }
 
 project_project = env['project.project'].search([('id', '=', project_id)])
