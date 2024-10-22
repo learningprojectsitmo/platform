@@ -1,6 +1,5 @@
 import ast
 from odoo.exceptions import ValidationError
-from odoo.tools import config as odoo_conf
 from odoo import api, fields, models, _
 
 class Project(models.Model):
@@ -35,9 +34,12 @@ class Project(models.Model):
         return super(Project, self).create(vals)
 
     def write(self, vals):
+        params = self.env['ir.config_parameter'].sudo()
+        project_stage_3_id = int(params.get_param('project_stage_3_id'))
+        project_stage_6_id = int(params.get_param('project_stage_6_id'))
         if not self.with_out:
             user = self.env['res.users'].search([('id', '=', self.env.uid)], limit=1)
-            if ((user.partner_id.is_master and vals.get('stage_id') == int(odoo_conf['project_stage_3_id'])) or (user.partner_id.is_master and vals.get('stage_id') == int(odoo_conf['project_stage_6_id']))):
+            if user.partner_id.is_master and (vals.get('stage_id') == project_stage_3_id or vals.get('stage_id') == project_stage_6_id):
                 raise ValidationError("Это может сделать только преподаватель")
         return super(Project, self).write(vals)
 
