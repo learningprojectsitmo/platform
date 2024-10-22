@@ -17,8 +17,11 @@ class TechnicalSpecification(models.Model):
     _inherit = ['mail.thread']
     _description = 'Technical Specification'
 
-    name = fields.Char(string='Название проекта', required=True)
-    target = fields.Text(string='', required=True)
+
+    # todo in ui (xml) required=True хз, тут надо думать
+    # todo status approved by lector
+    name = fields.Char(string='Название проекта*', required=True)
+    target = fields.Text(string='' ) #required=True
 
     # Сроки выполнения
     date_start = fields.Date(string='Начало')
@@ -28,10 +31,10 @@ class TechnicalSpecification(models.Model):
     author = fields.Many2one('res.partner', string='Автор', compute='_compute_author', readonly=True, tracking=True)
 
     # Термины и сокращения
-    terms_ids = fields.Many2many('lp.terms', string='Термины и сокращения', required=True)
+    terms_ids = fields.Many2many('lp.terms', string='Термины и сокращения' ) #required=True
 
     # Технические требования
-    specification_ids = fields.Many2many('lp.specification', string='Техническое требование', required=True)
+    specification_ids = fields.Many2many('lp.specification', string='Техническое требование' ) #required=True
 
     # Содержание работы (этапы по срокам, можно в таблицу)
     # этапы
@@ -40,12 +43,12 @@ class TechnicalSpecification(models.Model):
     task_task_ids = fields.Many2many('lp.task', string='Задачи')
 
     # Основные результаты работы и формы их представления
-    results = fields.Text(string='Основные результаты работы', help="Основные результаты работы и формы их представления", required=True)
+    results = fields.Text(string='Основные результаты работы', help="Основные результаты работы и формы их представления") # required=True
 
     file = fields.Binary(string='Name of field', attachment=True, index=True)
 
     @api.depends('author')
-    def _compute_author(self):
+    def _compute_author(self): # fix bug author master
         for rec in self:
             author = self.env['res.users'].browse(rec.create_uid.id).partner_id
             rec.author = author.id

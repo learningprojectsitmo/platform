@@ -23,6 +23,7 @@
         'wizards/views/lp_score_master_wizard.xml',
         'wizards/views/lp_score_lecturer_wizard.xml',
         'wizards/views/lp_load_document_wizard.xml',
+        'wizards/views/lp_invitation_bachelor_wizard.xml',
         'views/lp_project_views.xml',
         'views/lp_resume_views.xml',
         'views/lp_invitation_bachelor_views.xml',

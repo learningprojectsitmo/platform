@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="lp_send_invitation_bachelor_form" model="ir.ui.view">
+            <field name="name">lp.send.invitation.bachelor.wizard</field>
+            <field name="type">form</field>
+            <field name="model">lp.send.invitation.bachelor.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Создать отклик">
+                    <group>
+                        <field name="priority"/>
+                        <field name="project_id"/>
+                        <field name="resume"/>
+                        <field name="motivation"/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Отправить" type="object" class="btn-primary"/>
+                        <button string="Отменить" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="lp_send_invitation_bachelor_wizard" model="ir.actions.act_window">
+            <field name="name">Отправить отклик</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lp.send.invitation.bachelor.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="lp_send_invitation_bachelor_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>
