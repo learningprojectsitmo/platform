@@ -54,9 +54,12 @@ class LpProject(models.Model):
             if record.is_all_invited:
                 record.sudo().write({'status': 'CreationTex'})
                 if not self.technical_specification:
+                    current_user = self.env.user.partner_id
+                    message_partner_ids = record.message_partner_ids.filtered(lambda partner: partner != current_user)
                     technical_specification = self.env['lp.technical.specification'].sudo().create({
                         'name': record.name,
-                        'author': record.author.id
+                        'author': record.author.id,
+                        'message_partner_ids': message_partner_ids,
                     })
                     record.sudo().write({'technical_specification': technical_specification.id})
 

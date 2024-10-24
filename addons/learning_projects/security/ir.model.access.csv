@@ -33,10 +33,10 @@ access_lp_interest_lecturer,access.lp.interest,model_lp_interest,lp_group_lectur
 access_lp_resume_lecturer,access.lp.resume,model_lp_resume,lp_group_lecturer,1,0,0,0
 access_lp_invitation_bachelor_lecturer,access.lp.invitation.bachelor,model_lp_invitation_bachelor,lp_group_lecturer,1,0,0,0
 access_ir_attachment_lecturer,access.base.ir.attachment,base.model_ir_attachment,lp_group_lecturer,1,0,1,0
+access_lp_technical_specification_bachelor,access.lp.technical.specification,model_lp_technical_specification,lp_group_bachelor,1,0,0,0
+access_lp_technical_specification_master,access.lp.technical.specification,model_lp_technical_specification,lp_group_master,1,1,0,0
 access_lp_technical_specification_lecturer,access.lp.technical.specification,model_lp_technical_specification,lp_group_lecturer,1,0,0,0
-access_lp_technical_specification_master,access.lp.technical.specification,model_lp_technical_specification,lp_group_master,1,1,1,0
-access_lp_technical_specification_bachelor,access.lp.technical.specification,model_lp_technical_specification,lp_group_bachelor,1,1,1,0
-access_lp_technical_specification_admin,access.lp.technical.specification,model_lp_technical_specification,lp_group_admin,1,1,0,0
+access_lp_technical_specification_admin,access.lp.technical.specification,model_lp_technical_specification,lp_group_admin,1,1,1,0
 access_lp_terms_lecturer,access.lp.terms,model_lp_terms,lp_group_lecturer,1,0,0,0
 access_lp_terms_master,access.lp.terms,model_lp_terms,lp_group_master,1,1,1,0
 access_lp_terms_bachelor,access.lp.terms,model_lp_terms,lp_group_bachelor,1,1,0,0

@@ -10,6 +10,11 @@ from reportlab.pdfbase import pdfmetrics
 from io import BytesIO
 import base64
 
+STATUS = [
+    ('UnApproval', 'Не утверждено'),
+    ('Approval', 'Утверждено'),
+]
+
 
 class TechnicalSpecification(models.Model):
     _name = 'lp.technical.specification'
@@ -21,6 +26,9 @@ class TechnicalSpecification(models.Model):
     # todo status approved by lector
     name = fields.Char(string='Название проекта*', required=True)
     target = fields.Text(string='Цель*' ) #required=True
+
+    status = fields.Selection(STATUS, string='Статус', readonly=True, tracking=True, default='UnApproval')
+    message_partner_ids = fields.Many2many('res.partner', string='Message Partners')
 
     # Сроки выполнения
     date_start = fields.Date(string='Начало')

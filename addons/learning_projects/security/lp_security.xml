@@ -60,7 +60,33 @@
         <field name="active" eval="True"/>
     </record>
 
-    <!-- Hide for Bachelor Group project with status Unconfirmed-->
+    <!--  Master Group see only own TZ -->
+    <record id="lp_technical_specification_master" model="ir.rule">
+        <field name="name">Master TZ</field>
+        <field name="model_id" ref="model_lp_technical_specification"/>
+        <field name="domain_force">[('author', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('learning_projects.lp_group_master'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!--  Master Group see only own TZ -->
+    <record id="lp_technical_specification_bachelor" model="ir.rule">
+        <field name="name">Bachelor TZ</field>
+        <field name="model_id" ref="model_lp_technical_specification"/>
+        <field name="domain_force">[('message_partner_ids', 'in', [user.partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('learning_projects.lp_group_bachelor'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Hide for Bachelor Group project with status Unconfirmed -->
     <record id="lp_rule_owen_lp_project_master" model="ir.rule">
         <field name="name">Project Owen</field>
         <field name="model_id" ref="model_lp_project"/>
