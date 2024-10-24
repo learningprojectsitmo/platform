@@ -23,19 +23,20 @@ class TechnicalSpecification(models.Model):
 
 
     # todo in ui (xml) required=True хз, тут надо думать
-    # todo status approved by lector
     name = fields.Char(string='Название проекта*', required=True)
     target = fields.Text(string='Цель*' ) #required=True
 
+    # Accept Project info by lecturer
     status = fields.Selection(STATUS, string='Статус', readonly=True, tracking=True, default='UnApproval')
-    message_partner_ids = fields.Many2many('res.partner', string='Message Partners')
+    message_partner_ids = fields.Many2many('res.partner', string='Доступ для Бакалавров')
+    confirmed_id = fields.Many2one('res.partner', string='Подтверждено', readonly=True, tracking=True)
 
     # Сроки выполнения
     date_start = fields.Date(string='Начало')
     date_end = fields.Date(string='Конец')
 
     # Исполнитель проекта (руководитель проекта)
-    author = fields.Many2one('res.partner', string='Автор*', readonly=True, tracking=True)
+    author = fields.Many2one('res.partner', string='Автор', readonly=True, tracking=True)
 
     # Термины и сокращения
     terms_ids = fields.Many2many('lp.terms', string='Термины и сокращения*' ) #required=True
@@ -54,24 +55,12 @@ class TechnicalSpecification(models.Model):
 
     file = fields.Binary(string='Name of field', attachment=True, index=True)
 
-    def create_project(self):
-        params = self.env['ir.config_parameter'].sudo()
-        project_stage_2_id = int(params.get_param('project_stage_2_id'))
-        type_ids = []
-
-        for lp_stages in self.task_stage_ids:
-            type_id = self.env['project.task.stage'].sudo().create({'name': lp_stages.name, 'sequence': lp_stages.sequence})
-            type_ids.append(type_id)
-
-        project = self.env['project.project'].sudo().create({
-            'name': self.name,
-            'stage_id': project_stage_2_id,
-            'type_ids': type_ids,
-        })
-        project.sudo().write({'message_partner_ids': [(4, self.author.id)]})
-
-        # project.write({'project': project.id, 'status': 'OnApprovalTex'})
-        # self.env['project.task'].create({'name': self.name})
+    @api.depends('author')
+    def _compute_author(self):
+        for rec in self:
+            author = self.env['res.users'].browse(rec.create_uid.id).partner_id
+            rec.author = author.id
+            rec.create_uid = author.user.id
 
     def generate_technical_specification_pdf(self):
         buffer = BytesIO()
@@ -163,3 +152,22 @@ class TechnicalSpecification(models.Model):
 
     def generate_pdf(self):
         self.generate_technical_specification_pdf()
+
+    # def create_project(self):
+    #     params = self.env['ir.config_parameter'].sudo()
+    #     project_stage_2_id = int(params.get_param('project_stage_2_id'))
+    #     type_ids = []
+    #
+    #     for lp_stages in self.task_stage_ids:
+    #         type_id = self.env['project.task.stage'].sudo().create({'name': lp_stages.name, 'sequence': lp_stages.sequence})
+    #         type_ids.append(type_id)
+    #
+    #     project = self.env['project.project'].sudo().create({
+    #         'name': self.name,
+    #         'stage_id': project_stage_2_id,
+    #         'type_ids': type_ids,
+    #     })
+    #     project.sudo().write({'message_partner_ids': [(4, self.author.id)]})
+
+    # project.write({'project': project.id, 'status': 'OnApprovalTex'})
+    # self.env['project.task'].create({'name': self.name})

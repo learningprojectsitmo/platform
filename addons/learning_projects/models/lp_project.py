@@ -60,6 +60,7 @@ class LpProject(models.Model):
                         'name': record.name,
                         'author': record.author.id,
                         'message_partner_ids': message_partner_ids,
+                        'create_uid': record.author.user_id.id
                     })
                     record.sudo().write({'technical_specification': technical_specification.id})
 
@@ -121,8 +122,8 @@ class LpProject(models.Model):
 
     def confirm_project_tex(self):
         partner = self.env['res.users'].browse(self.env.uid).partner_id
-        return self.write({'status': 'Teamwork',
-                           'confirmed_id': partner.id})
+        for project in self:
+            project.technical_specification.sudo().write({'status': 'Approval', 'confirmed_id': partner.id})
 
     def action_view_tasks(self):
         project_id = self.project.id

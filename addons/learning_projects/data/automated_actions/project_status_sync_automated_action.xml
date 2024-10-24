@@ -41,7 +41,16 @@ if lp_project:
     lp_project.write({'status':status_with_stage_id.get(stage_id),
                       'confirmed_id': partner.id})
   else:
-    lp_project.write({'status':status_with_stage_id.get(stage_id)})
+    if status_with_stage_id.get(stage_id) == "Teamwork":
+            partner = env['res.users'].browse(env.uid).partner_id
+            lp_project.write({'status':status_with_stage_id.get(stage_id)})
+            lp_project.technical_specification.sudo().write(
+            {
+                'status': 'Approval',
+                'confirmed_id': partner.id
+            })
+    else:
+        lp_project.write({'status':status_with_stage_id.get(stage_id)})
 
         </field>
     </record>
