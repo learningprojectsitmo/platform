@@ -6,12 +6,11 @@
             <field name="name">lp.technical.specification.form</field>
             <field name="model">lp.technical.specification</field>
             <field name="arch" type="xml">
-                <form string="ModelTitle" create="false" delete="false" write="status != 'UnApproval'">
+                <form string="ModelTitle" create="false" delete="false">
                 <header>
 <!--                    <button name="create_project" string="Создать канбан" type="object" />-->
                     <field name="status" invisible="1"/>
                     <button string="Сгенерировать технисечкое задание" type="object" name="generate_pdf"/>
-                    <button name="%(action_report_technical_specification)d" type="action" string="Print Report" class="oe_highlight"/>
                 </header>
                 <sheet>
 
