@@ -143,8 +143,6 @@ class InvitationBachelor(models.Model):
     def action_reject_invitation(self):
         resume_author = self.resume_author.id
         lp_p = self.project_id
-        if lp_p.is_all_invited:
-            raise ValidationError('Вы уже пригласили {max_col_users}'.format(max_col_users=lp_p.max_col_users))
 
         lp_p.project.message_unsubscribe(partner_ids=[self.resume_author.id])
 

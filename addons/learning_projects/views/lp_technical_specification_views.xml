@@ -6,42 +6,45 @@
             <field name="name">lp.technical.specification.form</field>
             <field name="model">lp.technical.specification</field>
             <field name="arch" type="xml">
-                <form string="ModelTitle">
+                <form string="ModelTitle" create="false" delete="false" write="status != 'UnApproval'">
                 <header>
-                    <button name="create_project" string="Создать канбан" type="object" />
+<!--                    <button name="create_project" string="Создать канбан" type="object" />-->
+                    <field name="status" invisible="1"/>
                     <button string="Сгенерировать технисечкое задание" type="object" name="generate_pdf"/>
+                    <button name="%(action_report_technical_specification)d" type="action" string="Print Report" class="oe_highlight"/>
                 </header>
                 <sheet>
+
                     <div class="oe_title">
-                        <label for="name"/>
+                        <label for="name" readonly="status != 'UnApproval'" />
                         <h1>
-                            <field name="name" placeholder="Title"/>
-                            <label for="target"/>
-                            <field name="target" placeholder="Цель"/>
+                            <field name="name" readonly="status != 'UnApproval'" placeholder="Title"/>
+                            <label for="target" readonly="status != 'UnApproval'"/>
+                            <field name="target"  readonly="status != 'UnApproval'" placeholder="Цель"/>
                         </h1>
                     </div>
 
                         <group string="Сроки выполнения">
-                             <field name="date_start"/>
-                             <field name="date_end"/>
+                             <field name="date_start" readonly="status != 'UnApproval'"/>
+                             <field name="date_end" readonly="status != 'UnApproval'"/>
                         </group>
                         <group  string="Исполнитель проекта">
-                            <field name="author"/>
+                            <field name="author" readonly="status != 'UnApproval'"/>
                         </group>
                         <group string="Термины и сокращения">
-                            <field name="terms_ids"/>
+                            <field name="terms_ids" readonly="status != 'UnApproval'"/>
                         </group>
                         <group string="Технические требования">
-                            <field name="specification_ids"/>
+                            <field name="specification_ids" readonly="status != 'UnApproval'"/>
                         </group>
                          <group string="Содержание работы">
-                            <field name="task_stage_ids"/>
-                            <field name="task_task_ids"/>
+                            <field name="task_stage_ids" readonly="status != 'UnApproval'" />
+                            <field name="task_task_ids" readonly="status != 'UnApproval'"/>
                         </group>
                         <group>
                             <field name="results"/>
                              <button string="Сгенерировать технисечкое задание" type="object" name="generate_pdf"/>
-                            <field name="file"  invisible="file == False" widget="file"/>
+                            <field name="file" invisible="file == False" widget="file"/>
                         </group>
                 </sheet>
                  <div class="oe_chatter">
@@ -59,6 +62,7 @@
                 <tree string="ModelTitle">
                     <field name="name"/>
                     <field name="author"/>
+                    <field name="status"/>
                     <field name="create_date"/>
                 </tree>
             </field>

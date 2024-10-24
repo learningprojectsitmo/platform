@@ -14,16 +14,19 @@
                         <button name="send_confirm_project" string="Отправить на утверждение тему" type="object"
                                 invisible="status != 'Unconfirmed'" groups="learning_projects.lp_group_master"/>
                         <button name="send_confirm_project_tex" string="Отправить ТЗ на утверждение" type="object"
-                                invisible="status != 'Unconfirmed'" groups="learning_projects.lp_group_master"/>
+                                invisible="status != 'CreationTex'" groups="learning_projects.lp_group_master"/>
                         <button name="confirm_project" string="Утвердить проект" type="object"
                                 invisible="status != 'OnApproval'" groups="learning_projects.lp_group_lecturer, learning_projects.lp_group_admin"/>
+                        <button name="confirm_project_tex" string="Утвердить ТЗ" type="object"
+                                invisible="status != 'CreationTex'" groups="learning_projects.lp_group_lecturer, learning_projects.lp_group_admin"/>
                         <button name="action_view_tasks" string="Открыть канбан-доску" type="object" invisible="True" context="{'id': project}"/>
                         <button name="action_team_is_ready" string="Готовы к защите" type="object" invisible="status != 'Teamwork'"
                                 groups="learning_projects.lp_group_master, learning_projects.lp_group_admin"/>
                         <button string="Загрузить отчёт" type="action" name="%(learning_projects.load_document_wizard)d" class="oe_highlight" invisible="status != 'Teamwork'"/>
                         <button string="Отправить в работу проект" type="object" groups="learning_projects.lp_group_admin" name="set_work_project" class="oe_highlight"
                                 invisible="status != 'TeamFormation'"/>
-                        <button string="Создать отклик" type="object" name="create_invitation_bachelor" groups="learning_projects.lp_group_bachelor" invisible="status != 'TeamFormation'"/>
+                        <button string="Создать отклик" type="object" name="create_invitation_bachelor" groups="learning_projects.lp_group_bachelor" class="oe_highlight"
+                                invisible="status != 'TeamFormation'"/>
                     </header>
                     <sheet>
                         <field name="logo" widget="image" class="oe_avatar"/>
@@ -40,6 +43,7 @@
                             <field name="status"/>
                             <field name="max_col_users"/>
                             <field name="tag_ids" widget="many2many_tags"/>
+                            <field name="technical_specification"/>
                         </group>
                         <notebook>
                             <page string="Запросы на участие в проекте">

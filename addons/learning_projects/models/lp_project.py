@@ -41,9 +41,10 @@ class LpProject(models.Model):
     tag_ids = fields.Many2many(related='project.tag_ids', string='Навыки', tracking=True)
     # note = fields.Many2many('note.note', string='Записки', tracking=True)
 
+    technical_specification  = fields.Many2one('lp.technical.specification', string='ТЗ', readonly=True, tracking=True)
     # Team
     message_partner_ids = fields.Many2many(related='project.message_partner_ids', string='message_follower_ids', readonly=True, tracking=True)
-    max_col_users = fields.Integer(string='Максимальное количество участников', default=6, readonly=True, tracking=True)
+    max_col_users = fields.Integer(string='Максимальное количество участников', default=5, readonly=True, tracking=True)
     current_value_users = fields.Integer(string='Текущее количество участников', default=0, readonly=True, tracking=True)
 
     @api.depends('max_col_users', 'current_value_users')
@@ -52,6 +53,16 @@ class LpProject(models.Model):
             record.is_all_invited = record.current_value_users >= record.max_col_users
             if record.is_all_invited:
                 record.sudo().write({'status': 'CreationTex'})
+                if not self.technical_specification:
+                    current_user = self.env.user.partner_id
+                    message_partner_ids = record.message_partner_ids.filtered(lambda partner: partner != current_user)
+                    technical_specification = self.env['lp.technical.specification'].sudo().create({
+                        'name': record.name,
+                        'author': record.author.id,
+                        'message_partner_ids': message_partner_ids,
+                        'create_uid': record.author.user_id.id
+                    })
+                    record.sudo().write({'technical_specification': technical_specification.id})
 
                 for invitation_id in record.invitation_bachelor_ids.ids:
                     invitation = self.env['lp.invitation.bachelor'].browse(invitation_id)
@@ -91,7 +102,7 @@ class LpProject(models.Model):
         params = self.env['ir.config_parameter'].sudo()
         project_stage_2_id = int(params.get_param('project_stage_2_id'))
         if not self.project:
-            project = self.env['project.project'].create({
+            project = self.env['project.project'].sudo().create({
                 'name': self.name,
                 'stage_id': project_stage_2_id
             })
@@ -111,8 +122,8 @@ class LpProject(models.Model):
 
     def confirm_project_tex(self):
         partner = self.env['res.users'].browse(self.env.uid).partner_id
-        return self.write({'status': 'Teamwork',
-                           'confirmed_id': partner.id})
+        for project in self:
+            project.technical_specification.sudo().write({'status': 'Approval', 'confirmed_id': partner.id})
 
     def action_view_tasks(self):
         project_id = self.project.id
@@ -125,17 +136,16 @@ class LpProject(models.Model):
         if self and self.invitation_bachelor_ids.filtered(lambda inv: inv.user_id.id == self.env.uid):
             notification_type = 'warning'
             title = 'Ошибка'
-            message = 'Приглашение уже отправленно'
+            message = 'Приглашение уже отправлено'
             return create_notification(notification_type, title, message)
 
         return {
             'type': 'ir.actions.act_window',
-            'res_model': 'lp.invitation.bachelor',
+            'res_model': 'lp.send.invitation.bachelor.wizard',
             'view_mode': 'form',
             'target': 'new',
             'context': {
                 'default_project_id': self.id,
-                # 'default_invited_status': "waiting",
             },
             'options': {'hide_save': True}
         }
